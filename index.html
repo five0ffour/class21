@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+        crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <title>Employee </title>
+
+</head>
+
+<body>
+    <div class="container" style= "width: 80%">
+        <div class = "card bg-dark text-white text-center">
+            <h4> Comprensive Directory of Employee Billable Hours </h4>
+        </div>
+        <div class="card">
+            <div class="card-header">
+                Current Emplyees
+            </div>
+            <div class="card-body">
+
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Employee Name</th>
+                            <th>Role</th>
+                            <th>Start Date</th>
+                            <th>Months Worked</th>
+                            <th>Monthly Rate</th>
+                            <th>Total Billed</th>
+
+                        </tr>
+                    <tbody id="employeeListElem">
+
+                    </tbody>
+                    </thead>
+                </table>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                Add Emplyee
+            </div>
+            <div class="card-body">
+                <form>
+                    <label type="text"> Employee Name </label>
+                    <input type="text" class="form-control" id="employeeName" placeholder="John Doe">
+                    <label type="text"> Role </label>
+                    <input type="text" class="form-control" id="Role" placeholder="CEO">
+                    <label type="text"> Start Date (MM/DD/YYYY)</label>
+                    <input type="text" class="form-control" id="startDate" placeholder="08/09/2010">
+                    <label type="text"> Monthly Rate </label>
+                    <input type="text" class="form-control" id="monthlyRate" placeholder="5000">
+                    <input id="addEmployee" type="submit" value="submit">
+                </form>
+            </div>
+        </div>
+
+        <script src="https://www.gstatic.com/firebasejs/5.5.6/firebase.js"></script>
+        <script type="text/javascript">
+
+
+            // Initialize Firebase
+            var config = {
+                apiKey: "AIzaSyAMOBwYRMQuG-DcD5ouKK91aDPAyLeJfPo",
+                authDomain: "class21-92200.firebaseapp.com",
+                databaseURL: "https://class21-92200.firebaseio.com",
+                projectId: "class21-92200",
+                storageBucket: "class21-92200.appspot.com",
+                messagingSenderId: "72205514812"
+            };
+            firebase.initializeApp(config);
+
+            var database = firebase.database();
+            var employees = [];
+
+            $("#addEmployee").on("click", function () {
+                event.preventDefault();
+                var employee = {};
+                employee.name = $("#employeeName").val().trim();
+                employee.role = $("#Role").val().trim();
+                employee.startDate = $("#startDate").val().trim();
+                employee.monthlyRate = $("#monthlyRate").val().trim();
+
+                database.ref().push({
+                    name: employee.name,
+                    role: employee.role,
+                    startDate: employee.startDate,
+                    monthlyRate: employee.monthlyRate
+                });
+
+
+            });
+
+            function updateemployeelist(employee) {
+                var tbody = $("#employeeListElem");
+
+                var tr = $("<tr>");
+                tbody.append(tr);
+                var td = $("<td>");
+                td.text(employee.name);
+                tr.append(td);
+                td = $("<td>");
+                td.text(employee.role);
+                tr.append(td);
+                td = $("<td>");
+                td.text(employee.startDate);
+                tr.append(td);
+                td = $("<td>");
+                td.text(employee.monthlyRate);
+                tr.append(td);
+
+            };
+
+            database.ref().on("child_added", function (childSnapshot) {
+                console.log(childSnapshot.val());
+                var employee = {};
+                employee.name = childSnapshot.val().name;
+                employee.role = childSnapshot.val().role;
+                employee.startDate = childSnapshot.val().startDate;
+                employee.monthlyRate = childSnapshot.val().monthlyRate;
+
+                updateemployeelist(employee);
+
+
+            });
+
+        </script>
+
+        <div></div>
+
+
+    </div>
+</body>
+
+</html>
